@@ -22,6 +22,7 @@ namespace Celeste.Mod.HonlyHelper
         private string GothDialogID; //cutscene name, lacking Id at end i.e. "BaddyDialog_" becoming "BaddyDialog_0", "BaddyDialog_1", etc
         private int DialogAmount; //amount of dialogs this trigger can call on, so final cutscene is GothDialogID + N-1
         private bool Loops; //if loops == true, will rotate through entire set of dialog IDs, looping when reaching the end. otherwise only repeats final dialog
+        private bool Ends; //if ends == true, badeline will just not show up after finishing the loop once
 
         private Coroutine TattleCoroutine;
         private Coroutine rejoiningCoroutine;
@@ -44,6 +45,7 @@ namespace Celeste.Mod.HonlyHelper
             GothDialogID = data.Attr("GothDialogID");
             DialogAmount = data.Int("DialogAmount");
             Loops = data.Bool("Loops");
+            Ends = data.Bool("Ends");
             
         }
 
@@ -70,12 +72,17 @@ namespace Celeste.Mod.HonlyHelper
             {
 
                 HonlyHelperModule.Settings.TalkToBadeline.ConsumePress();
-                Tattling = true;
-                player.StateMachine.State = 11;
-                player.StateMachine.Locked = true;
-                player.ForceCameraUpdate = true;
-                level.StartCutscene(OnTattleEnd);
-                Add(TattleCoroutine = new Coroutine(TheTattling(player)));
+                
+                if (level.Session.GetCounter(GothDialogID) != DialogAmount)
+                {
+                    Tattling = true;
+                    player.StateMachine.State = 11;
+                    player.StateMachine.Locked = true;
+                    player.ForceCameraUpdate = true;
+                    level.StartCutscene(OnTattleEnd);
+                    Add(TattleCoroutine = new Coroutine(TheTattling(player)));
+                }
+
             }
 
         }
@@ -92,6 +99,10 @@ namespace Celeste.Mod.HonlyHelper
                 if (Loops)
                 {
                     dialogCounter = 0;
+                }
+                if (Ends)
+                {
+                    dialogCounter = DialogAmount;
                 }
             }
             else

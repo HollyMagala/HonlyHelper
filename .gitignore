@@ -246,7 +246,6 @@ Ahorn/entities/HonlyHorrorNode.jl
 Ahorn/entities/HonlyJellyfish.jl
 Code/ColliderAddendum.cs
 Code/FaithPlate.cs
-Code/FireFlyDance.cs
 Code/GravityWell.cs
 Code/HorrorNode.cs
 Code/Jellyfish.cs
